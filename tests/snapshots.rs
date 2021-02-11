@@ -233,3 +233,54 @@ fn convert_spv(name: &str) {
 fn convert_spv_shadow() {
     convert_spv("shadow");
 }
+
+#[cfg(feature = "glsl-in")]
+fn convert_glsl(name: &str, entry_points: Vec<(String, naga::ShaderStage)>, language: Language) {
+    let params = match std::fs::read_to_string(format!("tests/in/{}{}", name, ".param.ron")) {
+        Ok(string) => ron::de::from_str(&string).expect("Couldn't find param file"),
+        Err(_) => Parameters::default(),
+    };
+
+    let module = naga::front::glsl::parse_str(
+        &std::fs::read_to_string(format!("tests/in/{}{}", name, ".glsl"))
+            .expect("Couldn't find glsl file"),
+        entry_points,
+        Default::default(),
+    )
+    .unwrap();
+    naga::proc::Validator::new().validate(&module).unwrap();
+
+    #[cfg(feature = "spv-out")]
+    {
+        if language.contains(Language::SPIRV) {
+            check_output_spv(&module, name, &params);
+        }
+    }
+    #[cfg(feature = "msl-out")]
+    {
+        if language.contains(Language::METAL) {
+            check_output_msl(&module, name, &params);
+        }
+    }
+    #[cfg(feature = "glsl-out")]
+    {
+        if language.contains(Language::GLSL) {
+            for &(stage, ref ep_name) in module.entry_points.keys() {
+                check_output_glsl(&module, name, stage, ep_name);
+            }
+        }
+    }
+}
+
+#[cfg(feature = "glsl-in")]
+#[test]
+fn convert_glsl_quad() {
+    convert_glsl(
+        "quad-glsl",
+        vec![
+            ("vert_main".to_string(), naga::ShaderStage::Vertex),
+            ("frag_main".to_string(), naga::ShaderStage::Fragment),
+        ],
+        Language::SPIRV,
+    );
+}
