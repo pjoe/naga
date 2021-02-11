@@ -7,7 +7,7 @@ use super::ast::*;
 use super::error::ErrorKind;
 use super::token::TokenMetadata;
 
-impl Program {
+impl<'program> Program<'program> {
     pub fn lookup_variable(&mut self, name: &str) -> Result<Option<Handle<Expression>>, ErrorKind> {
         if let Some(local_var) = self.context.lookup_local_var(name) {
             return Ok(Some(local_var));

@@ -25,7 +25,7 @@ mod variables;
 
 pub fn parse_str(
     source: &str,
-    entry_points: Vec<(String, ShaderStage)>,
+    entry_points: Vec<(&str, ShaderStage)>,
     defines: FastHashMap<String, String>,
 ) -> Result<Module, ParseError> {
     let mut program = Program::new(entry_points);

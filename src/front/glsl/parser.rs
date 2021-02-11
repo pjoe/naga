@@ -14,8 +14,8 @@ pomelo! {
         };
     }
     %token #[derive(Debug)] #[cfg_attr(test, derive(PartialEq))] pub enum Token {};
-    %parser pub struct Parser<'a> {};
-    %extra_argument &'a mut Program;
+    %parser pub struct Parser<'a, 'program> {};
+    %extra_argument &'a mut Program<'program>;
     %extra_token TokenMetadata;
     %error ErrorKind;
     %syntax_error {

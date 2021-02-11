@@ -6,7 +6,7 @@ use crate::{
 
 use super::{ast::*, error::ErrorKind};
 
-impl Program {
+impl<'program> Program<'program> {
     pub fn function_call(&mut self, fc: FunctionCall) -> Result<ExpressionRule, ErrorKind> {
         match fc.kind {
             FunctionCallKind::TypeConstructor(ty) => {

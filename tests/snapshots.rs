@@ -235,7 +235,7 @@ fn convert_spv_shadow() {
 }
 
 #[cfg(feature = "glsl-in")]
-fn convert_glsl(name: &str, entry_points: Vec<(String, naga::ShaderStage)>, language: Language) {
+fn convert_glsl(name: &str, entry_points: Vec<(&str, naga::ShaderStage)>, language: Language) {
     let params = match std::fs::read_to_string(format!("tests/in/{}{}", name, ".param.ron")) {
         Ok(string) => ron::de::from_str(&string).expect("Couldn't find param file"),
         Err(_) => Parameters::default(),
@@ -278,8 +278,8 @@ fn convert_glsl_quad() {
     convert_glsl(
         "quad-glsl",
         vec![
-            ("vert_main".to_string(), naga::ShaderStage::Vertex),
-            ("frag_main".to_string(), naga::ShaderStage::Fragment),
+            ("vert_main", naga::ShaderStage::Vertex),
+            ("frag_main", naga::ShaderStage::Fragment),
         ],
         Language::SPIRV,
     );

@@ -7,10 +7,10 @@ use crate::{
 };
 
 #[derive(Debug)]
-pub struct Program {
+pub struct Program<'program> {
     pub version: u16,
     pub profile: Profile,
-    pub entry_points: Vec<(String, ShaderStage)>,
+    pub entry_points: Vec<(&'program str, ShaderStage)>,
     pub lookup_function: FastHashMap<String, Handle<Function>>,
     pub lookup_type: FastHashMap<String, Handle<Type>>,
     pub lookup_global_variables: FastHashMap<String, Handle<GlobalVariable>>,
@@ -19,8 +19,8 @@ pub struct Program {
     pub module: Module,
 }
 
-impl Program {
-    pub fn new(entry_points: Vec<(String, ShaderStage)>) -> Program {
+impl<'program> Program<'program> {
+    pub fn new(entry_points: Vec<(&'program str, ShaderStage)>) -> Program {
         Program {
             version: 0,
             profile: Profile::Core,
